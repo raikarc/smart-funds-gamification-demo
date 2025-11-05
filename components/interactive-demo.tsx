@@ -1,12 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 
 export function InteractiveDemo() {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [savings, setSavings] = useState(0)
   const [points, setPoints] = useState(0)
@@ -75,8 +77,7 @@ export function InteractiveDemo() {
         setBadges((prev) => [...prev, "Goal Crusher"])
       }
     } else {
-      // Redirect to signup
-      window.scrollTo({ top: 0, behavior: "smooth" })
+      router.push("/dashboard")
     }
   }
 
@@ -143,7 +144,7 @@ export function InteractiveDemo() {
                     <p className="font-semibold text-primary">Amazing! You just experienced the power of SmartFunds.</p>
                     <p className="text-sm text-muted-foreground mt-2">Ready to start your real financial journey?</p>
                   </div>
-                  <Button size="lg" className="w-full" onClick={() => alert("Sign up functionality would go here!")}>
+                  <Button size="lg" className="w-full" onClick={handleNext}>
                     Create Your Free Account
                   </Button>
                   <Button variant="outline" size="sm" onClick={resetDemo} className="w-full bg-transparent">

@@ -46,6 +46,7 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(255, 255, 255, 0.2);
   --sidebar-ring: rgba(207, 48, 197, 0.5);
+  --font-montserrat: "Montserrat", sans-serif;
 }
 
 .dark {
@@ -90,6 +91,10 @@
 }
 
 @theme inline {
+  /* Adding Montserrat font configuration */
+  --font-sans: var(--font-montserrat);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -135,6 +140,6 @@
   body {
     /* Updated body to use gradient background */
     background: var(--background);
-    @apply text-foreground;
+    @apply text-foreground font-sans;
   }
 }
