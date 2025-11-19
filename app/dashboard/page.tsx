@@ -8,24 +8,23 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  Trophy,
-  Target,
-  TrendingUp,
-  Users,
-  Sparkles,
-  Award,
-  DollarSign,
-  Calendar,
-  Zap,
-  Crown,
-  Star,
-} from "lucide-react"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Trophy, Target, TrendingUp, Users, Sparkles, Award, DollarSign, Calendar, Zap, Crown, Star } from 'lucide-react'
 
 export default function DashboardPage() {
   const [userPoints] = useState(1250)
   const [userLevel] = useState(5)
   const [savingsGoal] = useState(500)
-  const [currentSavings] = useState(342)
+  const [currentSavings, setCurrentSavings] = useState(342)
+  const [isAddSavingsOpen, setIsAddSavingsOpen] = useState(false)
+  const [savingsAmount, setSavingsAmount] = useState("")
+  const [savingsSource, setSavingsSource] = useState("Job")
 
   const badges = [
     { id: 1, name: "First Save", icon: "💰", earned: true, color: "bg-secondary" },
@@ -42,11 +41,11 @@ export default function DashboardPage() {
   ]
 
   const leaderboard = [
-    { rank: 1, name: "Sarah M.", points: 2450, avatar: "/diverse-group-avatars.png" },
-    { rank: 2, name: "Alex K.", points: 2180, avatar: "/diverse-group-avatars.png" },
-    { rank: 3, name: "You", points: 1250, avatar: "/diverse-group-avatars.png", isUser: true },
-    { rank: 4, name: "Jordan P.", points: 1120, avatar: "/diverse-group-avatars.png" },
-    { rank: 5, name: "Taylor R.", points: 980, avatar: "/diverse-group-avatars.png" },
+    { rank: 1, name: "Sarah M.", points: 2450, avatar: "/avatar-1.png" },
+    { rank: 2, name: "Alex K.", points: 2180, avatar: "/avatar-2.jpg" },
+    { rank: 3, name: "You", points: 1250, avatar: "/images/design-mode/New%20Piskel-1.png.png", isUser: true },
+    { rank: 4, name: "Jordan P.", points: 1120, avatar: "/avatar-3.jpg" },
+    { rank: 5, name: "Taylor R.", points: 980, avatar: "/avatar-4.jpg" },
   ]
 
   const aiInsights = [
@@ -67,6 +66,16 @@ export default function DashboardPage() {
       color: "text-primary",
     },
   ]
+
+  const handleAddSavings = () => {
+    const amount = parseFloat(savingsAmount)
+    if (amount > 0) {
+      setCurrentSavings(currentSavings + amount)
+      setSavingsAmount("")
+      setSavingsSource("Job")
+      setIsAddSavingsOpen(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -102,8 +111,7 @@ export default function DashboardPage() {
                       <Target className="h-5 w-5 text-primary" />
                       Current Savings Goal
                     </CardTitle>
-                    <CardDescription className="text-foreground/70">Winter Break Trip
-</CardDescription>
+                    <CardDescription className="text-foreground/70">Winter Break Trip</CardDescription>
                   </div>
                   <Badge className="bg-secondary text-secondary-foreground">
                     {Math.round((currentSavings / savingsGoal) * 100)}% Complete
@@ -119,10 +127,65 @@ export default function DashboardPage() {
                 </div>
                 <Progress value={(currentSavings / savingsGoal) * 100} className="h-3" />
                 <div className="flex gap-2">
-                  <Button className="flex-1 bg-primary hover:bg-primary/90 text-white">
-                    <DollarSign className="h-4 w-4 mr-2" />
-                    Add Savings
-                  </Button>
+                  <Dialog open={isAddSavingsOpen} onOpenChange={setIsAddSavingsOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="flex-1 bg-primary hover:bg-primary/90 text-white">
+                        <DollarSign className="h-4 w-4 mr-2" />
+                        Add Savings
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-card border-border">
+                      <DialogHeader>
+                        <DialogTitle className="text-foreground">Add Savings</DialogTitle>
+                        <DialogDescription className="text-foreground/70">
+                          Enter the amount you'd like to add and select the source.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium text-foreground block mb-2">
+                            Amount ($)
+                          </label>
+                          <input
+                            type="number"
+                            placeholder="0.00"
+                            value={savingsAmount}
+                            onChange={(e) => setSavingsAmount(e.target.value)}
+                            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-foreground block mb-2">
+                            Source
+                          </label>
+                          <select
+                            value={savingsSource}
+                            onChange={(e) => setSavingsSource(e.target.value)}
+                            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          >
+                            <option value="Job">Job</option>
+                            <option value="Scholarships">Scholarships</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div className="flex gap-2 pt-4">
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-border text-foreground hover:bg-muted bg-transparent"
+                            onClick={() => setIsAddSavingsOpen(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                            onClick={handleAddSavings}
+                          >
+                            Add ${savingsAmount}
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   <Button
                     variant="outline"
                     className="flex-1 border-border text-foreground hover:bg-muted bg-transparent"
@@ -275,7 +338,7 @@ export default function DashboardPage() {
                       {user.rank > 3 && <span className="text-sm font-semibold text-foreground/70">#{user.rank}</span>}
                     </div>
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src="/images/design-mode/New%20Piskel-1.png.png" />
+                      <AvatarImage src={user.avatar || "/placeholder.svg"} />
                       <AvatarFallback className="bg-primary text-white">{user.name[0]}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
