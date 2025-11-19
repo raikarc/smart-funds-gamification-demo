@@ -17,9 +17,7 @@ export function HeroSection() {
           </h1>
           <p className="mb-8 text-xl text-muted-foreground md:text-2xl">The Khan Academy of Money</p>
           <p className="mb-12 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Level up your finances with AI-powered insights, gamified savings goals, and a community that celebrates
-            your financial wins. Earn badges, unlock avatars, and join goal circles with friends.
-          </p>
+            learn to manage your big girl money reliably by joining goal circles, earning badges, and finding new income streams! earning badges, and   badges,              </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button size="lg" className="text-lg px-8 py-4" onClick={scrollToDemo}>
