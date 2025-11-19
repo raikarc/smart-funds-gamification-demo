@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Trophy, Target, TrendingUp, Users, Sparkles, Award, DollarSign, Calendar, Zap, Crown, Star } from 'lucide-react'
+import { Trophy, Target, TrendingUp, Users, Sparkles, Award, DollarSign, Calendar, Zap, Crown, Star, Copy, Check } from 'lucide-react'
 
 export default function DashboardPage() {
   const [userPoints] = useState(1250)
@@ -25,6 +25,9 @@ export default function DashboardPage() {
   const [isAddSavingsOpen, setIsAddSavingsOpen] = useState(false)
   const [savingsAmount, setSavingsAmount] = useState("")
   const [savingsSource, setSavingsSource] = useState("Job")
+  
+  const [selectedCircle, setSelectedCircle] = useState(null)
+  const [copiedInviteLink, setCopiedInviteLink] = useState(false)
 
   const badges = [
     { id: 1, name: "First Save", icon: "💰", earned: true, color: "bg-secondary" },
@@ -35,9 +38,44 @@ export default function DashboardPage() {
   ]
 
   const goalCircles = [
-    { id: 1, name: "No-Spend November", members: 234, progress: 67, joined: true },
-    { id: 2, name: "Campus Savers", members: 89, progress: 45, joined: true },
-    { id: 3, name: "Spring Break Fund", members: 156, progress: 82, joined: false },
+    { 
+      id: 1, 
+      name: "No-Spend November", 
+      description: "Join thousands of students committing to not spend money on non-essentials this November.",
+      members: [
+        { id: 1, name: "Sarah M.", avatar: "/avatar-1.png" },
+        { id: 2, name: "Alex K.", avatar: "/avatar-2.jpg" },
+        { id: 3, name: "Jordan P.", avatar: "/avatar-3.jpg" },
+      ],
+      progress: 67, 
+      joined: true,
+      inviteLink: "https://smartfunds.app/join/circle/no-spend-nov-2025"
+    },
+    { 
+      id: 2, 
+      name: "Campus Savers", 
+      description: "A group of students from our campus committed to building long-term savings habits and supporting each other.",
+      members: [
+        { id: 4, name: "Taylor R.", avatar: "/avatar-4.jpg" },
+        { id: 5, name: "Morgan L.", avatar: "/avatar-2.jpg" },
+        { id: 6, name: "Casey D.", avatar: "/avatar-3.jpg" },
+      ],
+      progress: 45, 
+      joined: true,
+      inviteLink: "https://smartfunds.app/join/circle/campus-savers-2025"
+    },
+    { 
+      id: 3, 
+      name: "Spring Break Fund", 
+      description: "Save up for an amazing spring break trip! This circle is perfect for friends planning to travel together.",
+      members: [
+        { id: 7, name: "Riley K.", avatar: "/avatar-1.png" },
+        { id: 8, name: "Parker M.", avatar: "/avatar-2.jpg" },
+      ],
+      progress: 82, 
+      joined: false,
+      inviteLink: "https://smartfunds.app/join/circle/spring-break-2025"
+    },
   ]
 
   const leaderboard = [
@@ -74,6 +112,14 @@ export default function DashboardPage() {
       setSavingsAmount("")
       setSavingsSource("Job")
       setIsAddSavingsOpen(false)
+    }
+  }
+
+  const handleCopyInviteLink = () => {
+    if (selectedCircle?.inviteLink) {
+      navigator.clipboard.writeText(selectedCircle.inviteLink)
+      setCopiedInviteLink(true)
+      setTimeout(() => setCopiedInviteLink(false), 2000)
     }
   }
 
@@ -250,16 +296,20 @@ export default function DashboardPage() {
                     {goalCircles
                       .filter((c) => c.joined)
                       .map((circle) => (
-                        <div key={circle.id} className="p-4 rounded-lg bg-muted/30 border border-border">
+                        <button
+                          key={circle.id}
+                          onClick={() => setSelectedCircle(circle)}
+                          className="w-full p-4 rounded-lg bg-muted/30 border border-border hover:bg-muted/50 hover:border-primary transition-colors text-left"
+                        >
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <h4 className="font-semibold text-foreground">{circle.name}</h4>
-                              <p className="text-sm text-foreground/70">{circle.members} members</p>
+                              <p className="text-sm text-foreground/70">{circle.members.length} members</p>
                             </div>
                             <Badge className="bg-secondary text-secondary-foreground">{circle.progress}%</Badge>
                           </div>
                           <Progress value={circle.progress} className="h-2 mt-2" />
-                        </div>
+                        </button>
                       ))}
                   </TabsContent>
                   <TabsContent value="discover" className="space-y-3 mt-4">
@@ -270,7 +320,7 @@ export default function DashboardPage() {
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <h4 className="font-semibold text-foreground">{circle.name}</h4>
-                              <p className="text-sm text-foreground/70">{circle.members} members</p>
+                              <p className="text-sm text-foreground/70">{circle.members.length} members</p>
                             </div>
                           </div>
                           <Button size="sm" className="mt-2 bg-primary hover:bg-primary/90 text-white w-full">
@@ -377,6 +427,69 @@ export default function DashboardPage() {
             </Card>
           </div>
         </div>
+
+        <Dialog open={!!selectedCircle} onOpenChange={(open) => !open && setSelectedCircle(null)}>
+          <DialogContent className="bg-card border-border max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-foreground text-2xl">{selectedCircle?.name}</DialogTitle>
+              <DialogDescription className="text-foreground/70">
+                {selectedCircle?.description}
+              </DialogDescription>
+            </DialogHeader>
+            {selectedCircle && (
+              <div className="space-y-6">
+                {/* Members Section */}
+                <div>
+                  <h3 className="font-semibold text-foreground mb-3">Circle Members ({selectedCircle.members.length})</h3>
+                  <div className="space-y-2">
+                    {selectedCircle.members.map((member) => (
+                      <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={member.avatar || "/placeholder.svg"} />
+                          <AvatarFallback className="bg-primary text-white text-xs">{member.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm text-foreground">{member.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Invite Link Section */}
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">Share with Friends</h3>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={selectedCircle.inviteLink}
+                      readOnly
+                      className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground/70 focus:outline-none"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={handleCopyInviteLink}
+                      className="bg-primary hover:bg-primary/90 text-white"
+                    >
+                      {copiedInviteLink ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Close Button */}
+                <Button
+                  onClick={() => setSelectedCircle(null)}
+                  variant="outline"
+                  className="w-full border-border text-foreground hover:bg-muted bg-transparent"
+                >
+                  Close
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
